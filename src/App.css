@@ -12,9 +12,27 @@
 }
 
 .stream {
-  max-width:300px;
-  max-height: 300px;
+  max-width:350px;
+  max-height: 350px;
   position: fixed;
-  margin: 50px;
+  margin: 25px;
   bottom: 0;
+}
+
+.statusbar {
+  width: 95vw;
+  height: 40px;
+  position: fixed;
+  margin: 10px;
+  top: 0;
+}
+
+.mapbar {
+  width: 68vw;
+  height: 75px;
+  position: fixed;
+  margin: 25px;
+  left:375px;
+  bottom: 0;
+  background-color: white;
 }

@@ -1,86 +1,78 @@
-import React, { Component } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import ROSLIB from 'roslib';
-import '../scss/Map.css'; 
+import React, {useEffect, useRef} from 'react';
+import { connect } from 'react-redux';
+import { setMapRef } from '../store/actionCreators';
 
-var ros: ROSLIB.Ros = new ROSLIB.Ros({url : 'ws://localhost:9090'});
-
-const param = new ROSLIB.Param({
-  ros: ros,
-  name: "/rosapi/gps-waypoints"
-});
-
-const topic = new ROSLIB.Topic({
-  ros: ros,
-  name: "/agbot_gps/fix",
-  messageType: "sensor_msgs/NavSatFix"
-});
-
-const topic_clients = new ROSLIB.Topic({
-  ros: ros,
-  name: "/client_count",
-  messageType: "std_msgs/Int32"
-});
-
-const containerStyle = {
-  width: '100vw',
-  height: '100vh'
+// Variables
+const GOOGLE_MAP_API_KEY = "AIzaSyBXLWtitszgxow6ixws-ZbV7TDrsErfCv8";
+const myLocation = { // CN Tower Landmark
+    lat: 43.642567,
+    lng: -79.387054
 };
+// styles
 
-interface MapState {
-  center: {lat:number; lng:number},
-  topic: ROSLIB.Topic
-}
+const mapStyles = {
+    width: '100vw',
+    height: '100vh'
+  };
 
-class Map extends Component<any,MapState> {
-  constructor(props: any, state: MapState) {
-    super(props,state);
-    this.state = {
-      center: {
-        lat: 42.360092,
-        lng: -71.094162
-      },
-      topic: topic
-    };
-    
-    this.state.topic.subscribe((message:any) => {
-      //console.log('Received message on ' + this.state.topic.name + ': ' + message.latitude);
-      this.setState({center:{lat:message.latitude, lng:message.longitude}});
+function GoogleMaps(props: any) {
+    // refs
+    const googleMapRef : any = React.createRef();
+    const googleMap : any = useRef(null);
+    const marker : any = useRef(null);
+
+    // helper functions
+    const createGoogleMap = () =>
+        new window.google.maps.Map(googleMapRef.current, {
+            zoom: 14,
+            center: {
+                lat: myLocation.lat,
+                lng: myLocation.lng
+            }
+        });
+
+    const createMarker = () =>
+        new window.google.maps.Marker({
+            position: {lat: myLocation.lat, lng: myLocation.lng},
+            map: googleMap.current
+        });
+
+    // useEffect Hook
+    useEffect(() => {
+        const googleMapScript = document.createElement('script');
+        googleMapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_API_KEY}&libraries=places`
+        window.document.body.appendChild(googleMapScript);
+
+        googleMapScript.addEventListener('load', () => {
+            googleMap.current = createGoogleMap();
+            marker.current = createMarker();
+            props.setMapRefFunc(googleMap.current);
+            console.log(googleMap.current);
+
+            
+        })
     });
-  }
 
-  /*componentDidMount() {
-    let data:any;
-    console.log("in mount: " + this.state.topic);
-    this.state.topic.subscribe(function(message:any) {
-      console.log('Received message on ' + topic.name + ': ' + message.data);
-      data = message.data
-    });
-    this.setState({center:data});
-  }*/
-
-  render() {
     return (
-      <div className="map">
-        <LoadScript
-          googleMapsApiKey="AIzaSyBXLWtitszgxow6ixws-ZbV7TDrsErfCv8"
-        >
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={this.state.center}
-            zoom={15}
-          >
-            { /* Child components, such as markers, info windows, etc. */ }
-            <></>
-            <Marker
-              /*onLoad={}*/
-              position={this.state.center}
-            />
-          </GoogleMap>
-        </LoadScript>
-      </div>
+        <div
+            id="google-map"
+            ref={googleMapRef as React.RefObject<HTMLDivElement>}
+            style={mapStyles}
+        />
     )
-  }
+
 }
 
-export default Map;
+function mapStateToProps(state: ReduxState) {
+    return {
+        addRegion: state.addRegion
+    }
+  }
+  
+  function mapDispatchToProps(dispatch: any) {
+    return {
+        setMapRefFunc: (map: any) => dispatch(setMapRef(map))
+    }
+  }
+
+export default connect(mapStateToProps, mapDispatchToProps)(GoogleMaps);

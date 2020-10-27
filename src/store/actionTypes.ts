@@ -1,0 +1,3 @@
+export const CHANGE_ADD_REGION = "CHANGE_ADD_REGION"
+
+export const SET_MAP_REF = "SET_MAP_REF"

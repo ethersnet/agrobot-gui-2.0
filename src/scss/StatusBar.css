@@ -1,0 +1,10 @@
+.statusbar {
+    opacity: 100%;
+    background-color: white;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
