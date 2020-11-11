@@ -1,3 +1,6 @@
 export const CHANGE_ADD_REGION = "CHANGE_ADD_REGION"
-
 export const SET_MAP_REF = "SET_MAP_REF"
+export const SET_ROBOT_REF = "SET_ROBOT_REF"
+export const ADD_REGION = "ADD_REGION"
+export const DELETE_REGION = "DELETE_REGION"
+export const CHANGE_DENSITY = "CHANGE_DENSITY"

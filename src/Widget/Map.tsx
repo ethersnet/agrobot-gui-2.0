@@ -1,10 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import { connect } from 'react-redux';
-import { setMapRef } from '../store/actionCreators';
+import { setMapRef, setRobotRef } from '../store/actionCreators';
+import { ReduxState } from '../store/types';
 
 // Variables
 const GOOGLE_MAP_API_KEY = "AIzaSyBXLWtitszgxow6ixws-ZbV7TDrsErfCv8";
-const myLocation = { // CN Tower Landmark
+let myLocation = { // CN Tower Landmark
     lat: 43.642567,
     lng: -79.387054
 };
@@ -20,6 +21,7 @@ function GoogleMaps(props: any) {
     const googleMapRef : any = React.createRef();
     const googleMap : any = useRef(null);
     const marker : any = useRef(null);
+
 
     // helper functions
     const createGoogleMap = () =>
@@ -47,8 +49,7 @@ function GoogleMaps(props: any) {
             googleMap.current = createGoogleMap();
             marker.current = createMarker();
             props.setMapRefFunc(googleMap.current);
-            console.log(googleMap.current);
-
+            props.setRobotRefFunc(marker.current);
             
         })
     });
@@ -65,13 +66,13 @@ function GoogleMaps(props: any) {
 
 function mapStateToProps(state: ReduxState) {
     return {
-        addRegion: state.addRegion
     }
   }
   
   function mapDispatchToProps(dispatch: any) {
     return {
-        setMapRefFunc: (map: any) => dispatch(setMapRef(map))
+        setMapRefFunc: (map: any) => dispatch(setMapRef(map)),
+        setRobotRefFunc: (robot: any) => dispatch(setRobotRef(robot))
     }
   }
 

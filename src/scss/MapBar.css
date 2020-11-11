@@ -1,4 +1,4 @@
-.statusbar {
+.mapbar {
     opacity: 100%;
     background-color: white;
     border-radius: 3px;
@@ -7,9 +7,4 @@
     flex-wrap: nowrap;
     justify-content: space-around;
     align-items: center;
-}
-
-.negSign {
-    min-width: 60px;
-    display:inline-block;
 }

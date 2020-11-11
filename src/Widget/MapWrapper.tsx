@@ -3,14 +3,10 @@ import ROSLIB from 'roslib';
 import '../scss/Map.css'; 
 import { connect } from 'react-redux';
 import GoogleMaps from './Map'
-import { Polyline } from '@react-google-maps/api';
+import { addRegion } from '../store/actionCreators';
+import { ReduxState } from '../store/types';
 
 var ros: ROSLIB.Ros = new ROSLIB.Ros({url : 'ws://localhost:9090'});
-
-const param = new ROSLIB.Param({
-  ros: ros,
-  name: "/rosapi/gps-waypoints"
-});
 
 const topic = new ROSLIB.Topic({
   ros: ros,
@@ -18,15 +14,8 @@ const topic = new ROSLIB.Topic({
   messageType: "sensor_msgs/NavSatFix"
 });
 
-const topic_clients = new ROSLIB.Topic({
-  ros: ros,
-  name: "/client_count",
-  messageType: "std_msgs/Int32"
-});
-
 interface MapState {
   center: {lat:number; lng:number},
-  regions: google.maps.Polygon[],
   newRegion: google.maps.Polyline | undefined
 }
 
@@ -38,49 +27,34 @@ class MapWrapper extends Component<any,MapState> {
         lat: 42.360092,
         lng: -71.094162
       },
-      regions: [],
       newRegion: undefined
     };
     
     topic.subscribe((message:any) => {
       //console.log('Received message on ' + this.state.topic.name + ': ' + message.latitude);
       this.setState({center:{lat:message.latitude, lng:message.longitude}});
-    });    
+    });
+
+    
+
   }
 
   closeRegion (point : google.maps.LatLng) {
     var marker = new google.maps.Marker({ map: this.props.map, position: point });
     google.maps.event.addListenerOnce(marker, 'click', () => {
-        let polygon = new window.google.maps.Polygon(
-        {
-            map: this.props.map,
-            paths: this.state.newRegion?.getPath(),
-            fillColor: "#D43AAC",
-            strokeColor: "#EB807E",
-            fillOpacity: 0.2,
-            strokeWeight: 5,
-            editable: true,
-            clickable: true,
-        }
-        );
-        if (this.state.newRegion) {this.state.newRegion.setMap(null); }
+      this.props.addRegionFunc(this.props.map, this.state.newRegion?.getPath(), this.props.density);
 
-        this.setState({regions: [
-            ...this.state.regions,
-            polygon
-        ],
-        newRegion: undefined
-        });
-
-        google.maps.event.addListener(polygon, 'click', function () {
-            polygon.setMap(null);
-        });
-        marker.setMap(null);
+      if (this.state.newRegion) {this.state.newRegion.setMap(null); }
+      this.setState({newRegion: undefined});
+      marker.setMap(null);
     });
-}
+  }
+
   
   render() {
-    if (this.props.map) {
+    if (this.props.map && this.props.robot) {
+        this.props.robot.setPosition(this.state.center);
+        this.props.map.setCenter(this.state.center);
         this.props.map.addListener("click", (e : any) => {
             if (this.props.addRegion) {
                 let newPoint = e.latLng;
@@ -104,6 +78,7 @@ class MapWrapper extends Component<any,MapState> {
                 }
             } 
         });
+
     }
 
     return (
@@ -117,12 +92,16 @@ class MapWrapper extends Component<any,MapState> {
 function mapStateToProps(state: ReduxState) {
   return {
       addRegion: state.addRegion,
-      map: state.map
+      map: state.map,
+      density: state.density,
+      regions: state.regions,
+      robot: state.robot
   }
 }
 
 function mapDispatchToProps(dispatch: any) {
   return {
+    addRegionFunc: (path: any, map: any, density: number) => dispatch(addRegion(path, map, density))
   }
 }
 
