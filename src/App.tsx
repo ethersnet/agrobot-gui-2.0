@@ -3,7 +3,6 @@ import './App.css';
 import Stream from './Widget/Stream';
 import StatusBar from './StatusBar';
 import MapBar from './MapBar';
-import GoogleMaps from './Widget/Map';
 import MapWrapper from './Widget/MapWrapper';
 import ReactSpeedometer from 'react-d3-speedometer';
 import ROSLIB from 'roslib';

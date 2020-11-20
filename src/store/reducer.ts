@@ -5,7 +5,7 @@ import { deleteRegion } from "./actionCreators"
 const initialState: ReduxState = {
   map: null,
   robot: null,
-  density: .001,
+  density: .01,
   regions: [],
   addRegion: false
 }

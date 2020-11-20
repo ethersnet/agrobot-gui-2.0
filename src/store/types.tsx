@@ -1,5 +1,3 @@
-import { deleteRegion } from "./actionCreators";
-
   
   export interface ReduxState {
     addRegion: boolean;
@@ -64,9 +62,10 @@ import { deleteRegion } from "./actionCreators";
         minLon = (coords[i].lng() < minLon) ? coords[i].lng() : minLon;
         maxLon = (coords[i].lng() > maxLon) ? coords[i].lng() : maxLon;
       }
-  
-      for (let lat = minLat; lat <= maxLat; lat += this.density) {
-        for (let lon = minLon; lon <= maxLon; lon += this.density) {
+      let lat_density = this.density / 110.574;
+      let lng_density = this.density / 111.320;
+      for (let lat = minLat; lat <= maxLat; lat += lat_density) {
+        for (let lon = minLon; lon <= maxLon; lon += lng_density / Math.cos(lat * Math.PI/180.0)) {
           var point = new google.maps.LatLng({lat: lat, lng: lon});
           if (google.maps.geometry.poly.containsLocation(point, this.region)) {
             this.addWaypoint(point);
@@ -78,7 +77,6 @@ import { deleteRegion } from "./actionCreators";
     addWaypoint(pos:google.maps.LatLng) {
       var marker = new google.maps.Marker({ map: this.map, icon: { path: google.maps.SymbolPath.CIRCLE, scale: 1}, position: pos, draggable: true });
       this.waypoints.push(marker);
-      console.log(this.waypoints);
       google.maps.event.addListenerOnce(marker,'click', () => {
         marker.setMap(null);
         const index = this.waypoints.indexOf(marker);

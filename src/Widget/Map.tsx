@@ -5,7 +5,7 @@ import { ReduxState } from '../store/types';
 
 // Variables
 const GOOGLE_MAP_API_KEY = "AIzaSyBXLWtitszgxow6ixws-ZbV7TDrsErfCv8";
-let myLocation = { // CN Tower Landmark
+let myLocation = {
     lat: 43.642567,
     lng: -79.387054
 };

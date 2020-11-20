@@ -69,8 +69,13 @@ class MapBar extends Component<any,MapBarState> {
     for (let i = 0; i < this.props.regions.length; i++) {
       waypointsList.push(this.props.regions[i].getWaypoints())
     }
-    alert(waypointsList);
     waypointsParam.set(waypointsList);
+  }
+
+  centerMap() {
+    if (this.props.robot && this.props.map) {
+      this.props.map.setCenter(this.props.robot.position);
+    }
   }
 
   render() {
@@ -79,11 +84,17 @@ class MapBar extends Component<any,MapBarState> {
       event.preventDefault();
       this.props.changeDensityFunc(newValue as number);
     };
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      this.props.changeDensityFunc(event.target.value);
+    };
     const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       this.props.changeAddRegionFunc();
     };
     const handleSendWaypoints = () => {
       this.sendWaypoints();
+    };
+    const handleCenterMap = () => {
+      this.centerMap();
     };
 
     return (
@@ -94,7 +105,7 @@ class MapBar extends Component<any,MapBarState> {
           />
           <div className={classes.root}>
             <Typography gutterBottom>
-              Waypoint Density
+              Waypoint Density (per km)
             </Typography>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs>
@@ -103,19 +114,20 @@ class MapBar extends Component<any,MapBarState> {
                     value={this.props.density}
                     onChange={handleButtonChange}
                     aria-labelledby="input-slider"
-                    min={.001}
+                    min={.01}
                     max={1}
-                    step={.001}
+                    step={.01}
                   />
               </Grid>
               <Grid item>
                 <Input
                     className={classes.input}
                     value={this.props.density}
+                    onChange={handleInputChange}
                     margin="dense"
                     inputProps={{
-                      step: .001,
-                      min: .001,
+                      step: .01,
+                      min: .01,
                       max: 1,
                       type: 'number',
                       'aria-labelledby': 'input-slider',
@@ -130,7 +142,7 @@ class MapBar extends Component<any,MapBarState> {
                 <Button className = {classes.sendWaypoints} color="primary" variant = "contained" onClick={handleSendWaypoints}>Send Waypoints</Button>
               </Grid>
               <Grid item>
-                <Button variant = "outlined" onClick={handleSendWaypoints}>Center Map</Button>
+                <Button variant = "outlined" onClick={handleCenterMap}>Center Map</Button>
               </Grid>
             </Grid>
           </div>
@@ -144,7 +156,9 @@ function mapStateToProps(state: ReduxState) {
     return {
         regions: state.regions,
         addRegion: state.addRegion,
-        density: state.density
+        density: state.density,
+        robot: state.robot,
+        map: state.map
     }
   }
   

@@ -31,7 +31,6 @@ class MapWrapper extends Component<any,MapState> {
     };
     
     topic.subscribe((message:any) => {
-      //console.log('Received message on ' + this.state.topic.name + ': ' + message.latitude);
       this.setState({center:{lat:message.latitude, lng:message.longitude}});
     });
 
@@ -54,11 +53,10 @@ class MapWrapper extends Component<any,MapState> {
   render() {
     if (this.props.map && this.props.robot) {
         this.props.robot.setPosition(this.state.center);
-        this.props.map.setCenter(this.state.center);
         this.props.map.addListener("click", (e : any) => {
             if (this.props.addRegion) {
                 let newPoint = e.latLng;
-                if (this.state.newRegion == undefined) {
+                if (this.state.newRegion === undefined) {
 
                     let polyline = new google.maps.Polyline({
                         map: this.props.map,

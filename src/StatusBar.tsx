@@ -126,8 +126,8 @@ class StatusBar extends Component<any,StatusBarState> {
           <div> Pitch: <span className="negSign">{this.state.pitch.toFixed(2)}°</span></div>
           <div> Roll: <span className="negSign">{this.state.roll.toFixed(2)}°</span></div>
           <div> Coordinates: {this.toDMSLat(this.state.position.lat)}, {this.toDMSLng(this.state.position.lng)} </div>
-          <div> (x, y, z): {this.state.rel_position.x}, {this.state.rel_position.y}, {this.state.rel_position.z} </div>
-          <div> Accuracy: {this.state.rel_pos_accuracy.x}, {this.state.rel_pos_accuracy.y}, {this.state.rel_pos_accuracy.z} </div>
+          <div> (x, y, z): {this.state.rel_position.x.toFixed(2)}, {this.state.rel_position.y.toFixed(2)}, {this.state.rel_position.z.toFixed(2)} </div>
+          <div> Accuracy: {this.state.rel_pos_accuracy.x.toFixed(2)}, {this.state.rel_pos_accuracy.y.toFixed(2)}, {this.state.rel_pos_accuracy.z.toFixed(2)} </div>
       </div>
     )
   }

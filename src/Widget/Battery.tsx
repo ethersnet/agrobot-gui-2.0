@@ -2,8 +2,6 @@ import 'battery-indicator-element';
 import React, { DetailedHTMLProps, HTMLAttributes, Component } from 'react';
 import ROSLIB from 'roslib';
 import '../scss/Battery.css'; 
-import csv from 'csv-parse';
-import fs from "fs";
 
 
 interface BatteryIndicatorProps
